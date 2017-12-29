@@ -1,0 +1,30 @@
+
+.ReactTable {
+    max-height: 87vh;
+    
+    .rt-thead {
+        overflow-y: scroll;
+
+        .rt-th {
+            outline: none;
+        }
+    }
+    
+
+    .react-nested-table-inner {
+        padding: 20px;
+        padding-top: 0;
+    
+        width: 60vw;
+        margin: 0 auto;
+
+        .title {
+            font-weight: bold;
+            font-size: 1.6rem;
+        }
+    }
+
+    .image {
+        width: 100%;
+    }
+}
