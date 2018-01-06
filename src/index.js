@@ -52,21 +52,13 @@ function isHtml(val) {
     return typeof val === 'string' && val.split('.').pop().includes('htm');
 }
 
-// Mapping between data key and column header title for display
-let keyMaps = {};
-
-// Mapping between data key and data model (schema for columns)
-let dataModelMaps = new Map();
-
-// used for storing expanding keys in different rows
-let currentExpandedKeys = {};
 
 /**
  * Render a table/iframe/list based on data
  * It will automatically change UI by the types of data
  * @param {Array/Object/String} data data needs to be rendered
  */
-function renderByData(data) {
+function renderByData(data, keyMaps, onCellDisplay) {
     if (!data) {
         return null;
     }
@@ -82,6 +74,9 @@ function renderByData(data) {
     if (isArray(data)) {
         const dataModel = data[0];
 
+        // used for storing expanding keys in different rows
+        let currentExpandedKeys = {};
+
         // render as a list if there is only String or Number in Array
         if (!isObject(dataModel) && !isArray(dataModel)) {
             return <ul>
@@ -89,7 +84,7 @@ function renderByData(data) {
             </ul>;
         }
 
-        const columns = dataToColumns(data);
+        const columns = dataToColumns(data, keyMaps, onCellDisplay, currentExpandedKeys);
 
         return <ReactTable
             data={data}
@@ -104,7 +99,7 @@ function renderByData(data) {
 
                 return <div className="react-nested-table-inner">
                     <h4 className="title">{keyMaps[currentExpandedKey] || currentExpandedKey}</h4>
-                    {renderByData(row.original[currentExpandedKey])}
+                    {renderByData(row.original[currentExpandedKey], keyMaps, onCellDisplay)}
                 </div>
             }}
             // onExpandedChange={(newExpanded, index, event) => {console.log('onExpand', newExpanded, index, event)}}
@@ -112,7 +107,10 @@ function renderByData(data) {
                 return {
                     onClick: (e, handleOriginal) => {
                         // used to identify which column is expanding
-                        currentExpandedKeys[rowInfo.index] = column.id;
+                        if (column.expander) {
+                            currentExpandedKeys[rowInfo.index] = column.id;
+                        }
+                        
                         // IMPORTANT! React-Table uses onClick internally to trigger
                         // events like expanding SubComponents and pivots.
                         // By default a custom 'onClick' handler will override this functionality.
@@ -133,21 +131,22 @@ function renderByData(data) {
  * @param {Array} data 
  * @returns {Array} an array of columns configuration
  */
-function dataToColumns(data) {
+function dataToColumns(data, keyMaps, onCellDisplay, currentExpandedKeys) {
     if (data && data.length) {
         const dataModel = data[0];
 
         return Object.keys(dataModel).map(key => {
             const currentData = dataModel[key];
-            // if (!currentData || !currentData.length) {
-            //     return {
-            //         Header: keyMaps[key] || key,
-            //         accessor: key,
-            //         Cell: cellData => (
-            //             null
-            //         )
-            //     };
-            // }
+            const defaultColumn = {
+                Header: keyMaps[key] || key,
+                accessor: key,
+                width: getTextWidth(key)
+            };
+
+            if (onCellDisplay) {
+                const column = onCellDisplay(key, currentData);
+                return Object.assign({}, defaultColumn, column);
+            }
 
             if (isObject(currentData) || isArray(currentData) || isHtml(currentData)) {
                 return {
@@ -172,9 +171,7 @@ function dataToColumns(data) {
             }
 
             if (isImage(currentData)) {
-                return {
-                    Header: keyMaps[key] || key,
-                    accessor: key,
+                return Object.assign({}, defaultColumn, {
                     Cell: cellData => (
                         <ImageZoom
                             image={{
@@ -183,15 +180,10 @@ function dataToColumns(data) {
                                 className: 'image'
                             }}
                         />
-                    )
-                }
+                )});
             }
 
-            return {
-                Header: keyMaps[key] || key,
-                accessor: key,
-                width: getTextWidth(key)
-            };
+            return defaultColumn;
         });
 
     }
@@ -201,12 +193,13 @@ function dataToColumns(data) {
 
 class ReactNestedTable extends Component {
     render() {
-        return renderByData(this.props.data);
+        return renderByData(this.props.data, this.props.headerMaps, this.props.onCellDisplay);
     }
 }
 
 ReactNestedTable.defaultProps = {
-    data: []
+    data: [],
+    headerMaps: {}
 }
 
 ReactNestedTable.propTypes = {
@@ -214,6 +207,11 @@ ReactNestedTable.propTypes = {
      * data, should be a json
      */
     data: PropTypes.array.isRequired,
+    /**
+     *  Mapping between data key and column header title for display
+     */
+    headerMaps: PropTypes.object,
+    onCellDisplay: PropTypes.func
 }
 
 export default ReactNestedTable;
