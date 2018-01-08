@@ -4,7 +4,7 @@ import { render } from 'react-dom';
 import ReactNestedTable from '../../src';
 import faker from 'faker';
 import hljs from 'highlight.js';
-import 'highlight.js/styles/github-gist.css';
+import 'highlight.js/styles/github.css';
 
 class FakeDataGenerator {
     constructor(/*number*/ size) {
@@ -65,6 +65,15 @@ class FakeDataGenerator {
 }
 
 const fakeData = new FakeDataGenerator(10).getAll();
+const headersMap = {
+  id: 'ID',
+  firstName: 'First Name',
+  lastName: 'Last Name',
+  bs: 'Company Contents',
+  companyName: 'Company Name',
+  detail: 'Detail',
+  address: 'Address'
+};
 
 class Demo extends Component {
     componentDidMount() {
@@ -72,22 +81,52 @@ class Demo extends Component {
     }
 
     render() {
+        
         return (
             <div>
                 <h1>react-nested-table Demo</h1>
-                <ReactNestedTable data={fakeData} />
-                <h2>Source Code</h2>
-                <pre>
-                    <code className="javascript">
-                        {`import ReactNestedTable from 'react-nested-table';
+                <section>
+                    <h2>1. Basic Example</h2>
+                    <ReactNestedTable data={fakeData} />
+                    <h3>Source Code</h3>
+                    <pre>
+                        <code className="javascript">
+                            {`import ReactNestedTable from 'react-nested-table';
 
 var jsonData = ${JSON.stringify(fakeData, null, 2)};
 
 <ReactNestedTable data={jsonData} />
 
           `}
-                    </code>
-                </pre>
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2>2. Change Table's Header with <code>headersMap</code></h2>
+                    <ReactNestedTable data={fakeData} headersMap={headersMap}/>
+                    <h3>Source Code</h3>
+                    <pre>
+                        <code className="javascript">
+                            {`import ReactNestedTable from 'react-nested-table';
+
+// change table's header
+var headersMap = {
+  id: 'ID',
+  firstName: 'First Name',
+  lastName: 'Last Name',
+  bs: 'Company Contents',
+  companyName: 'Company Name',
+  detail: 'Detail',
+  address: 'Address'
+};
+var jsonData = [...];
+
+<ReactNestedTable data={jsonData} headersMap={headersMap} />
+
+          `}
+                        </code>
+                    </pre>
+                </section>
             </div>
         );
     }
