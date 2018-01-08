@@ -193,13 +193,13 @@ function dataToColumns(data, keyMaps, onCellDisplay, currentExpandedKeys) {
 
 class ReactNestedTable extends Component {
     render() {
-        return renderByData(this.props.data, this.props.headerMaps, this.props.onCellDisplay);
+        return renderByData(this.props.data, this.props.headersMap, this.props.onCellDisplay);
     }
 }
 
 ReactNestedTable.defaultProps = {
     data: [],
-    headerMaps: {}
+    headersMap: {}
 }
 
 ReactNestedTable.propTypes = {
@@ -210,7 +210,7 @@ ReactNestedTable.propTypes = {
     /**
      *  Mapping between data key and column header title for display
      */
-    headerMaps: PropTypes.object,
+    headersMap: PropTypes.object,
     onCellDisplay: PropTypes.func
 }
 
