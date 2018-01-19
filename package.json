@@ -34,9 +34,9 @@
     "highlight.js": "^9.12.0"
   },
   "author": "Hector Guo<hectorguo@gmail.com>",
-  "homepage": "",
+  "homepage": "https://hectorguo.com/react-nested-table/",
   "license": "MIT",
-  "repository": "",
+  "repository": "https://github.com/hectorguo/react-nested-table",
   "keywords": [
     "react-component"
   ]
