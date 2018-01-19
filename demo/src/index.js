@@ -74,6 +74,32 @@ const headersMap = {
   detail: 'Detail',
   address: 'Address'
 };
+const handleCellDisplay = function(key, data) {
+    if (key === 'email') {
+        return {
+            width: 200,
+            Cell: cellData => <a href={'mailto:'+data}>{data}</a>
+        }
+    }
+
+    if (key === 'id') {
+        return {
+            style: {
+                color: 'red'
+            }
+        }
+    }
+
+    if (key === 'bs') {
+        return {
+            width: 200,
+            style: {
+                fontWeight: 700,
+                backgroundColor: 'yellow'
+            }
+        }
+    }
+}
 
 class Demo extends Component {
     componentDidMount() {
@@ -122,6 +148,52 @@ var headersMap = {
 var jsonData = [...];
 
 <ReactNestedTable data={jsonData} headersMap={headersMap} />
+
+          `}
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2>3. Customize Table's Cell with <code>onCellDisplay</code></h2>
+                    <ReactNestedTable data={fakeData} onCellDisplay={handleCellDisplay} />
+                    <h3>Source Code</h3>
+                    <pre>
+                        <code className="javascript">
+                            {`import ReactNestedTable from 'react-nested-table';
+
+// customize each cell display
+var handleCellDisplay = function(key, data) {
+    if (key === 'email') {
+        const MailLink = <a href={'mailto:'+data}>{data}</a>;
+
+        // options are refered to https://github.com/react-tools/react-table#columns
+        return {
+            width: 200,
+            Cell: cellData => <MailLink />
+        }
+    }
+
+    if (key === 'id') {
+        return {
+            style: {
+                color: 'red'
+            }
+        }
+    }
+
+    if (key === 'bs') {
+        return {
+            width: 200,
+            style: {
+                fontWeight: 700,
+                backgroundColor: 'yellow'
+            }
+        }
+    }
+}
+var jsonData = [...];
+
+<ReactNestedTable data={jsonData} onCellDisplay={handleCellDisplay} />
 
           `}
                         </code>

@@ -143,11 +143,6 @@ function dataToColumns(data, keyMaps, onCellDisplay, currentExpandedKeys) {
                 width: getTextWidth(key)
             };
 
-            if (onCellDisplay) {
-                const column = onCellDisplay(key, currentData);
-                return Object.assign({}, defaultColumn, column);
-            }
-
             if (isObject(currentData) || isArray(currentData) || isHtml(currentData)) {
                 return {
                     expander: true,
@@ -168,6 +163,13 @@ function dataToColumns(data, keyMaps, onCellDisplay, currentExpandedKeys) {
                         userSelect: "none"
                     }
                 };
+            }
+
+            if (onCellDisplay) {
+                const column = onCellDisplay(key, currentData);
+                if (column) {
+                    return Object.assign({}, defaultColumn, column);
+                }
             }
 
             if (isImage(currentData)) {
