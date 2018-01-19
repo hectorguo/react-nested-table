@@ -4,7 +4,7 @@ import { render } from 'react-dom';
 import ReactNestedTable from '../../src';
 import faker from 'faker';
 import hljs from 'highlight.js';
-import 'highlight.js/styles/github-gist.css';
+import 'highlight.js/styles/github.css';
 
 class FakeDataGenerator {
     constructor(/*number*/ size) {
@@ -65,6 +65,41 @@ class FakeDataGenerator {
 }
 
 const fakeData = new FakeDataGenerator(10).getAll();
+const headersMap = {
+  id: 'ID',
+  firstName: 'First Name',
+  lastName: 'Last Name',
+  bs: 'Company Contents',
+  companyName: 'Company Name',
+  detail: 'Detail',
+  address: 'Address'
+};
+const handleCellDisplay = function(key, data) {
+    if (key === 'email') {
+        return {
+            width: 200,
+            Cell: cellData => <a href={'mailto:'+data}>{data}</a>
+        }
+    }
+
+    if (key === 'id') {
+        return {
+            style: {
+                color: 'red'
+            }
+        }
+    }
+
+    if (key === 'bs') {
+        return {
+            width: 200,
+            style: {
+                fontWeight: 700,
+                backgroundColor: 'yellow'
+            }
+        }
+    }
+}
 
 class Demo extends Component {
     componentDidMount() {
@@ -72,22 +107,98 @@ class Demo extends Component {
     }
 
     render() {
+        
         return (
             <div>
                 <h1>react-nested-table Demo</h1>
-                <ReactNestedTable data={fakeData} />
-                <h2>Source Code</h2>
-                <pre>
-                    <code className="javascript">
-                        {`import ReactNestedTable from 'react-nested-table';
+                <section>
+                    <h2>1. Basic Example</h2>
+                    <ReactNestedTable data={fakeData} />
+                    <h3>Source Code</h3>
+                    <pre>
+                        <code className="javascript">
+                            {`import ReactNestedTable from 'react-nested-table';
 
 var jsonData = ${JSON.stringify(fakeData, null, 2)};
 
 <ReactNestedTable data={jsonData} />
 
           `}
-                    </code>
-                </pre>
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2>2. Change Table's Header with <code>headersMap</code></h2>
+                    <ReactNestedTable data={fakeData} headersMap={headersMap}/>
+                    <h3>Source Code</h3>
+                    <pre>
+                        <code className="javascript">
+                            {`import ReactNestedTable from 'react-nested-table';
+
+// change table's header
+var headersMap = {
+  id: 'ID',
+  firstName: 'First Name',
+  lastName: 'Last Name',
+  bs: 'Company Contents',
+  companyName: 'Company Name',
+  detail: 'Detail',
+  address: 'Address'
+};
+var jsonData = [...];
+
+<ReactNestedTable data={jsonData} headersMap={headersMap} />
+
+          `}
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2>3. Customize Table's Cell with <code>onCellDisplay</code></h2>
+                    <ReactNestedTable data={fakeData} onCellDisplay={handleCellDisplay} />
+                    <h3>Source Code</h3>
+                    <pre>
+                        <code className="javascript">
+                            {`import ReactNestedTable from 'react-nested-table';
+
+// customize each cell display
+var handleCellDisplay = function(key, data) {
+    if (key === 'email') {
+        const MailLink = <a href={'mailto:'+data}>{data}</a>;
+
+        // options are refered to https://github.com/react-tools/react-table#columns
+        return {
+            width: 200,
+            Cell: cellData => <MailLink />
+        }
+    }
+
+    if (key === 'id') {
+        return {
+            style: {
+                color: 'red'
+            }
+        }
+    }
+
+    if (key === 'bs') {
+        return {
+            width: 200,
+            style: {
+                fontWeight: 700,
+                backgroundColor: 'yellow'
+            }
+        }
+    }
+}
+var jsonData = [...];
+
+<ReactNestedTable data={jsonData} onCellDisplay={handleCellDisplay} />
+
+          `}
+                        </code>
+                    </pre>
+                </section>
             </div>
         );
     }

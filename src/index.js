@@ -143,11 +143,6 @@ function dataToColumns(data, keyMaps, onCellDisplay, currentExpandedKeys) {
                 width: getTextWidth(key)
             };
 
-            if (onCellDisplay) {
-                const column = onCellDisplay(key, currentData);
-                return Object.assign({}, defaultColumn, column);
-            }
-
             if (isObject(currentData) || isArray(currentData) || isHtml(currentData)) {
                 return {
                     expander: true,
@@ -168,6 +163,13 @@ function dataToColumns(data, keyMaps, onCellDisplay, currentExpandedKeys) {
                         userSelect: "none"
                     }
                 };
+            }
+
+            if (onCellDisplay) {
+                const column = onCellDisplay(key, currentData);
+                if (column) {
+                    return Object.assign({}, defaultColumn, column);
+                }
             }
 
             if (isImage(currentData)) {
@@ -193,13 +195,13 @@ function dataToColumns(data, keyMaps, onCellDisplay, currentExpandedKeys) {
 
 class ReactNestedTable extends Component {
     render() {
-        return renderByData(this.props.data, this.props.headerMaps, this.props.onCellDisplay);
+        return renderByData(this.props.data, this.props.headersMap, this.props.onCellDisplay);
     }
 }
 
 ReactNestedTable.defaultProps = {
     data: [],
-    headerMaps: {}
+    headersMap: {}
 }
 
 ReactNestedTable.propTypes = {
@@ -210,7 +212,7 @@ ReactNestedTable.propTypes = {
     /**
      *  Mapping between data key and column header title for display
      */
-    headerMaps: PropTypes.object,
+    headersMap: PropTypes.object,
     onCellDisplay: PropTypes.func
 }
 
